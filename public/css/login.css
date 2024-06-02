@@ -1,0 +1,4 @@
+body {
+    background: url("../system_image/bg1.png") no-repeat center / cover;
+    background-attachment: fixed;
+}
