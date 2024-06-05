@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('salary_grades', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('emp_id');
             $table->decimal('step_1', 10, 2)->nullable();
             $table->decimal('step_2', 10, 2)->nullable();
             $table->decimal('step_3', 10, 2)->nullable();
@@ -22,9 +23,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('salary_grades');

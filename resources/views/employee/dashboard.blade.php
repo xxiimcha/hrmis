@@ -23,13 +23,25 @@
                     </div>
 
                     <div class="col-xl-4">
-                        <div class="card bg-info text-white">
+                        <div class="card bg-success text-white">
                             <div class="card-header d-flex align-items-center">
-                                <span class="material-icons-outlined me-2">all_inbox</span>
-                                Remaining Leaves
+                                <span class="material-icons-outlined me-2"></span>
+                                Vacation Leave
                             </div>
                             <div class="card-body fw-bold py-2 h4">
-                                {{ $leaveCredits }}
+                                {{ $vacationLeave }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4">
+                        <div class="card bg-danger text-white">
+                            <div class="card-header d-flex align-items-center">
+                                <span class="material-icons-outlined me-2">healing</span>
+                                Sick Leave
+                            </div>
+                            <div class="card-body fw-bold py-2 h4">
+                                {{ $sickLeave }}
                             </div>
                         </div>
                     </div>

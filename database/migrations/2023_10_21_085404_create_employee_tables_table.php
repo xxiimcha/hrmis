@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->nullable();
             $table->foreignIdFor(EmployeePersonalInformation::class);
             $table->integer('leaveCredits')->default(10);
+            $table->decimal('vacationLeave', 8, 2)->change();
+            $table->decimal('sickLeave', 8, 2)->change();
             $table->foreignIdFor(Department::class);
             $table->foreignIdFor(EmployeeIssuedId::class);
             $table->string('position');

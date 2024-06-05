@@ -38,6 +38,12 @@
                                     <span class="material-icons-outlined me-2">work</span> Service Record
                                 </a>
                             </li>
+
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link d-flex align-items-center justify-content-center fw-bold" id="salary-grade0" data-mdb-toggle="tab" href="#salary-grade" role="tab" aria-controls="salary-grade" aria-selected="false">
+                                    <span class="material-icons-outlined me-2">bar_chart</span> Salary Grade
+                                </a>
+                            </li>
                         </ul>
 
                         <div class="tab-content" id="info-content">
@@ -1214,6 +1220,63 @@
                                                         @include('includes.edit-service-record')
 
                                                         <a href="/welcome/hr/employee/all/info/{{ $employee->id }}/removeServiceRecord/{{ $sr->id }}">
+                                                            <span class="material-icons-outlined text-danger ms-2">remove</span>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade py-2" id="salary-grade" role="tabpanel" aria-labelledby="salary-grade0">
+                                <button class="btn btn-light btn-sm shadow-sm" id="dlc">
+                                    <div class="d-flex align-items-center">
+                                        <span class="material-icons-outlined me-2 text-primary" style="font-size: 20px">download</span>
+                                        Download as PDF
+                                    </div>
+                                </button>
+
+                                <button class="btn btn-light btn-sm shadow-sm" data-mdb-toggle="modal" data-mdb-target="#newSCard">
+                                    <div class="d-flex align-items-center">
+                                        <span class="material-icons-outlined me-2 text-warning" style="font-size: 20px">add</span>
+                                        Add
+                                    </div>
+                                </button>
+
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-sm table-bordered text-nowrap">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th class="fw-bold">Employee Number</th>
+                                                <th class="fw-bold">Step 1</th>
+                                                <th class="fw-bold">Step 2</th>
+                                                <th class="fw-bold">Step 3</th>
+                                                <th class="fw-bold">Step 4</th>
+                                                <th class="fw-bold">Step 5</th>
+                                                <th class="fw-bold">Step 6</th>
+                                                <th class="fw-bold">Step 7</th>
+                                                <th class="fw-bold">Step 8</th>
+                                                <th class="fw-bold">Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @foreach ($salaryGrades as $grade)
+                                                <tr class="text-center">
+                                                    <td>{{ $grade->emp_id }}</td>
+                                                    <td>{{ number_format($grade->step_1, 2) }}</td>
+                                                    <td>{{ number_format($grade->step_2, 2) }}</td>
+                                                    <td>{{ number_format($grade->step_3, 2) }}</td>
+                                                    <td>{{ number_format($grade->step_4, 2) }}</td>
+                                                    <td>{{ number_format($grade->step_5, 2) }}</td>
+                                                    <td>{{ number_format($grade->step_6, 2) }}</td>
+                                                    <td>{{ number_format($grade->step_7, 2) }}</td>
+                                                    <td>{{ number_format($grade->step_8, 2) }}</td>
+                                                    <td>
+                                                        <span class="material-icons-outlined text-warning" style="cursor: pointer" data-mdb-toggle="modal" data-mdb-target="#editGrade_{{ $grade->id }}">edit</span>
+                                                        <a href="/welcome/hr/employee/all/info/{{ $employee->id }}/removeGrade/{{ $grade->id }}">
                                                             <span class="material-icons-outlined text-danger ms-2">remove</span>
                                                         </a>
                                                     </td>

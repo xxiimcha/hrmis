@@ -51,7 +51,27 @@ class Hr extends Controller
         $employeeCounts = User::where('role', 6)->count();
         $leaveCounts = LeaveRequest::where('receiverHead', '!=', 4)->count();
 
-        return view('hr.dashboard', [ 'employee' => $employeeCounts, 'leaveCount' => $leaveCounts ]);
+        $leaveTypes = [
+            'Vacation Leave' => LeaveRequest::where('typeOfLeave6A', 1)->count(),
+            'Mandatory/Forced Leave' => LeaveRequest::where('typeOfLeave6A', 2)->count(),
+            'Sick Leave' => LeaveRequest::where('typeOfLeave6A', 3)->count(),
+            'Maternity Leave' => LeaveRequest::where('typeOfLeave6A', 4)->count(),
+            'Paternity Leave' => LeaveRequest::where('typeOfLeave6A', 5)->count(),
+            'Special Privilege Leave' => LeaveRequest::where('typeOfLeave6A', 6)->count(),
+            'Solo Parent Leave' => LeaveRequest::where('typeOfLeave6A', 7)->count(),
+            'Study Leave' => LeaveRequest::where('typeOfLeave6A', 8)->count(),
+            '10-Day VAWC Leave' => LeaveRequest::where('typeOfLeave6A', 9)->count(),
+            'Rehabilitation Privilege' => LeaveRequest::where('typeOfLeave6A', 10)->count(),
+            'Special Leave Benefits for Women' => LeaveRequest::where('typeOfLeave6A', 11)->count(),
+            'Special Emergency Leave' => LeaveRequest::where('typeOfLeave6A', 12)->count(),
+            'Adoption Leave' => LeaveRequest::where('typeOfLeave6A', 13)->count(),
+        ];
+
+        return view('hr.dashboard', [
+            'employee' => $employeeCounts,
+            'leaveCount' => $leaveCounts,
+            'leaveTypes' => $leaveTypes
+        ]);
     }
 
     public function leaveRequestReceived(Request $request) {
@@ -465,10 +485,34 @@ class Hr extends Controller
 
     public function info(Request $request, string $employeeNo) {
         // get employee information
-        $employee = EmployeeTable::find($employeeNo);
+        $employee = EmployeeTable::with([
+            'employeeInfo',
+            'employeeDepartment',
+            'employeeServiceRecord',
+            'employeeLeaveCard',
+            'employeeFamilyBackground',
+            'employeeEducation',
+            'employeeCS',
+            'employeeWE',
+            'employeeVol',
+            'employeeLearning',
+            'employeeHobby',
+            'employeeRecog',
+            'employeeMembership',
+            'employeeReference',
+            'employeeIssuedId'
+        ])->find($employeeNo);
+
         $department = DB::table('departments')->get();
 
-        return view('hr.employee-profile', [ 'employee' => $employee, 'departments' => $department ]);
+        // get salary grades for the employee
+        $salaryGrades = SalaryGrade::where('emp_id', $employeeNo)->get();
+
+        return view('hr.employee-profile', [
+            'employee' => $employee,
+            'departments' => $department,
+            'salaryGrades' => $salaryGrades
+        ]);
     }
 
     public function editEmployeeInfo(Request $request, string $employeeNo) {
@@ -966,30 +1010,29 @@ class Hr extends Controller
         }
     }
 
-
-    public function stepNotifications(Request $request){
-
+    public function stepNotifications(Request $request)
+    {
         $this->checkFor3Years();
 
-        $notif = StepNotification::all();
+        $notif = StepNotification::with('employeeTinfo.employeeInfo')->get();
 
-        if($request->method() == "POST"){
+        if ($request->isMethod('post')) {
             $stepId = $request->stepId;
-            $employee = EmployeeTable::where('id', $request->employeeTableId)->first();
+            $employee = EmployeeTable::findOrFail($request->employeeTableId);
 
             // Remove existing StepNotification entries
-            StepNotification::where('employee_table_id', $request->employeeTableId,)->delete();
+            StepNotification::where('employee_table_id', $request->employeeTableId)->delete();
 
             $pdf = Pdf::loadView('download.step-notice', [
                 'employee' => $employee,
                 'data' => $request->all()
-            ])->setPaper('legal', 'portrait')->setOptions([ 'isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif' ]);
+            ])->setPaper('legal', 'portrait')->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
 
             StepNotification::where('id', $stepId)->update([
-
+                // Update with necessary data
             ]);
 
-            EmployeeTable::where('id', $request->employeeTableId)->update([
+            $employee->update([
                 'position' => $request->position,
                 'current_salary' => $request->meritValue + $request->lengthOfServiceValue + $employee->current_salary * 30,
                 'current_salary_mode' => '/month',
@@ -1001,16 +1044,19 @@ class Hr extends Controller
             return redirect()->back()->with('message', '<strong>Success!</strong>');
         }
 
-        return view('hr.step-notifications', [ 'notif' => $notif ]);
+        return view('hr.hrmenu', ['notif' => $notif]);
     }
 
-    public function listSalaryGrades()
-    {
-        // Logic to retrieve the list of salary grades
-        $salaryGrades = SalaryGrade::all(); // Assuming SalaryGrade is your model
 
-        // Pass the salary grades data to the view
-        return view('hr.list-salary-grades', ['salaryGrades' => $salaryGrades]);
+    public function listSalaryGrades($employee_id)
+    {
+        $salaryGrades = SalaryGrade::where('emp_id', $employee_id)->get();
+        $employee = Employee::find($employee_id);
+
+        return view('hr.list-salary-grades', [
+            'salaryGrades' => $salaryGrades,
+            'employee' => $employee
+        ]);
     }
 
     public function createSalaryGrade(Request $request)

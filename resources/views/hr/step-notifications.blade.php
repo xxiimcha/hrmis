@@ -55,7 +55,7 @@
         <section class="px-3">
             <h2 class="h1 fw-bold">Step Increment Notifications</h2>
             <h1 class="h6">
-            
+
             </h1>
 
             @include('includes.message')

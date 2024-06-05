@@ -18,9 +18,14 @@ class Em extends Controller
         $leaveRequests = LeaveRequest::where('employee_table_id', $i->id)->count();
 
         $leaveCredits = $i->leaveCredits;
+        $vacationLeave = $i->vacationLeave;
+        $sickLeave = $i->sickLeave;
+
         return view('employee.dashboard', [
             'leaveCount' => $leaveRequests,
             'leaveCredits' => $leaveCredits,
+            'vacationLeave' => $vacationLeave,
+            'sickLeave' => $sickLeave,
         ]);
     }
 
