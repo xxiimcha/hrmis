@@ -38,7 +38,8 @@ use App\Models\{
     EmployeeMembership,
     EmployeeReference,
     EmployeeIssuedId,
-    StepNotification
+    StepNotification,
+    SalaryGrade
 };
 
 use Illuminate\Support\Str;
@@ -966,40 +967,81 @@ class Hr extends Controller
     }
 
 
-public function stepNotifications(Request $request){
+    public function stepNotifications(Request $request){
 
-    $this->checkFor3Years();
+        $this->checkFor3Years();
 
-    $notif = StepNotification::all();
+        $notif = StepNotification::all();
 
-    if($request->method() == "POST"){
-        $stepId = $request->stepId;
-        $employee = EmployeeTable::where('id', $request->employeeTableId)->first();
+        if($request->method() == "POST"){
+            $stepId = $request->stepId;
+            $employee = EmployeeTable::where('id', $request->employeeTableId)->first();
 
-        // Remove existing StepNotification entries
-        StepNotification::where('employee_table_id', $request->employeeTableId,)->delete();
+            // Remove existing StepNotification entries
+            StepNotification::where('employee_table_id', $request->employeeTableId,)->delete();
 
-        $pdf = Pdf::loadView('download.step-notice', [
-            'employee' => $employee,
-            'data' => $request->all()
-        ])->setPaper('legal', 'portrait')->setOptions([ 'isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif' ]);
+            $pdf = Pdf::loadView('download.step-notice', [
+                'employee' => $employee,
+                'data' => $request->all()
+            ])->setPaper('legal', 'portrait')->setOptions([ 'isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif' ]);
 
-        StepNotification::where('id', $stepId)->update([
+            StepNotification::where('id', $stepId)->update([
 
-        ]);
+            ]);
 
-        EmployeeTable::where('id', $request->employeeTableId)->update([
-            'position' => $request->position,
-            'current_salary' => $request->meritValue + $request->lengthOfServiceValue + $employee->current_salary * 30,
-            'current_salary_mode' => '/month',
-            'entered_date' => now()
-        ]);
+            EmployeeTable::where('id', $request->employeeTableId)->update([
+                'position' => $request->position,
+                'current_salary' => $request->meritValue + $request->lengthOfServiceValue + $employee->current_salary * 30,
+                'current_salary_mode' => '/month',
+                'entered_date' => now()
+            ]);
 
-        return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
+            return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
 
-         return redirect()->back()->with('message', '<strong>Success!</strong>');
+            return redirect()->back()->with('message', '<strong>Success!</strong>');
+        }
+
+        return view('hr.step-notifications', [ 'notif' => $notif ]);
     }
 
-    return view('hr.step-notifications', [ 'notif' => $notif ]);
-}
+    public function listSalaryGrades()
+    {
+        // Logic to retrieve the list of salary grades
+        $salaryGrades = SalaryGrade::all(); // Assuming SalaryGrade is your model
+
+        // Pass the salary grades data to the view
+        return view('hr.list-salary-grades', ['salaryGrades' => $salaryGrades]);
+    }
+
+    public function createSalaryGrade(Request $request)
+    {
+        if ($request->isMethod('post')) {
+
+            $request->validate([
+                'step_1' => 'nullable|numeric',
+                'step_2' => 'nullable|numeric',
+                'step_3' => 'nullable|numeric',
+                'step_4' => 'nullable|numeric',
+                'step_5' => 'nullable|numeric',
+                'step_6' => 'nullable|numeric',
+                'step_7' => 'nullable|numeric',
+                'step_8' => 'nullable|numeric',
+            ]);
+
+            SalaryGrade::create($request->only([
+                'step_1',
+                'step_2',
+                'step_3',
+                'step_4',
+                'step_5',
+                'step_6',
+                'step_7',
+                'step_8',
+            ]));
+
+            return redirect()->route('salary-grades.list')->with('success', 'Salary grade created successfully.');
+        }
+
+        return view('hr.create-salary-grade');
+    }
 }

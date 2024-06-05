@@ -16,7 +16,12 @@ class Em extends Controller
         $i = EmployeeTable::where('user_id', auth()->user()->id)->first();
 
         $leaveRequests = LeaveRequest::where('employee_table_id', $i->id)->count();
-        return view('employee.dashboard', [ 'leaveCount' => $leaveRequests ]);
+
+        $leaveCredits = $i->leaveCredits;
+        return view('employee.dashboard', [
+            'leaveCount' => $leaveRequests,
+            'leaveCredits' => $leaveCredits,
+        ]);
     }
 
     public function newLeaveRequest(Request $request) {

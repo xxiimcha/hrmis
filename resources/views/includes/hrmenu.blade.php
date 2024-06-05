@@ -66,6 +66,31 @@
                         </a>
                     </ul>
                 @endif
+
+                @if(auth()->user()->role == 1)
+                    <a aria-current="true"  href="#salary-grade" aria-controls="salary-grade" aria-expanded="true" class="list-group-item list-group-item-action py-2 ripple d-flex align-items-center justify-content-between {{ strpos(url()->current(), 'welcome/hr/salary-grade') !== false ? 'bg-warning text-white' : '' }}">
+                        <div class="d-flex align-items-center">
+                            <span class="material-icons-outlined pe-2">attach_money</span>
+                            <font class="pt-1">Salary Grade</font>
+                        </div>
+
+                        <div>
+                            <span class="material-icons-outlined pt-2">keyboard_arrow_down</span>
+                        </div>
+                    </a>
+
+                    <ul id="salary-grade" class=" {{ strpos(url()->current(), 'welcome/hr/salary-grade') !== false ? 'show' : '' }} list-group list-group-flush">
+                        <a href="/welcome/hr/salary-grade/list" class="list-group-item border-bottom list-group-item-action py-2 ripple d-flex align-items-center {{ Request::is('welcome/hr/salary-grade/list') ? 'menu-active2' : '' }}">
+                            <span class="material-icons-outlined pe-2">list_alt</span>
+                            <font class="pt-1">List Salary Grades</font>
+                        </a>
+
+                        <a href="/welcome/hr/salary-grade/new" class="list-group-item border-bottom list-group-item-action py-2 ripple d-flex align-items-center {{ Request::is('welcome/hr/salary-grade/new') ? 'menu-active2' : '' }}">
+                            <span class="material-icons-outlined pe-2">add</span>
+                            <font class="pt-1">Add New Salary Grade</font>
+                        </a>
+                    </ul>
+                @endif
             </div>
       	</div>
     </nav>

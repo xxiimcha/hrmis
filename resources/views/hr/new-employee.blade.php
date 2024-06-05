@@ -13,7 +13,7 @@
     @include('includes.new-membership')
     @include('includes.new-reference')
 
-    
+
     <main style="margin-top: 63px;">
         <div class="alert alert-warning rounded-0 mb-3 small">
             <strong>Note:</strong> This form must refer to the Personal Data Sheet CS Form No. 212 (Revised 2017)
@@ -524,7 +524,7 @@
                                     Name of children (Write full name & list all)  <button type="button" data-mdb-toggle="modal" data-mdb-target="#newChild" class="btn btn-sm btn-primary">add</button>
                                 </p>
                             </div>
-                            
+
                             <ul id="newChildContainer"></ul>
                             <button onclick="showPreviousPart('part2', 'part1')" class="btn btn-success btn-md">Previous</button>
                             <button onclick="showNextPart('part2', 'part3')" class="btn btn-warning btn-md">Next</button>
@@ -552,7 +552,7 @@
                                 <span>IV. <span class="fw-bold text-warning">Civil Service Eligibility</span></span>
                                 <button type="button" class="btn btn-sm btn-primary mt-2" data-mdb-toggle="modal" data-mdb-target="#newCService">add</button>
                             </div>
-                            
+
                             <ul id="newCServiceContainer"></ul>
                             <button onclick="showPreviousPart('part4', 'part3')" class="btn btn-success btn-md">Previous</button>
                             <button onclick="showNextPart('part4', 'part5')" class="btn btn-warning btn-md">Next</button>
@@ -566,7 +566,7 @@
                                 <span>V. <span class="fw-bold text-warning">Work Experience</span></span>
                                 <button type="button" class="btn btn-sm btn-primary mt-2" data-mdb-toggle="modal" data-mdb-target="#newWExp">add</button>
                             </div>
-                            
+
                             <ul id="newWExpContainer"></ul>
                             <button onclick="showPreviousPart('part5', 'part4')" class="btn btn-success btn-md">Previous</button>
                             <button onclick="showNextPart('part5', 'part6')" class="btn btn-warning btn-md">Next</button>
@@ -580,7 +580,7 @@
                                 <span>VI. <span class="fw-bold text-warning">Voluntary work or involvement in civic/non-government/people/voluntary organization/s</span></span>
                                 <button type="button" class="btn btn-sm btn-primary mt-2" data-mdb-toggle="modal" data-mdb-target="#newVoluntary">add</button>
                             </div>
-                            
+
                             <ul id="newVoluntaryContainer"></ul>
                             <button onclick="showPreviousPart('part6', 'part5')" class="btn btn-success btn-md">Previous</button>
                             <button onclick="showNextPart('part6', 'part7')" class="btn btn-warning btn-md">Next</button>
@@ -625,7 +625,7 @@
                                 <span>Membership in association/organization</span>
                                 <button type="button" class="btn btn-sm btn-primary mt-2" data-mdb-toggle="modal" data-mdb-target="#newOtherMembership">add</button>
                             </div>
-                           
+
                             <ul id="newOtherMembershipContainer"></ul>
                             <!-- End of Part 8 ] -->
 
