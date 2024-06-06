@@ -5,6 +5,7 @@
     @include('includes.new-service-record')
     @include('includes.new-leave-card')
     @include('includes.new-salary-grade')
+    @include('includes.add-leave-balance')
 
     <main class="putMtop">
         <div class="container">
@@ -90,10 +91,9 @@
                                     <div class="col-xl-2">
                                         <strong>Leave Credits :</strong>
                                     </div>
-
                                     <div class="col-xl-10 d-flex align-items-center">
                                         <span id="creditsCount">{{ $employee->leaveCredits }}</span>
-                                        <span id="updateCred" class="material-icons-outlined text-warning ms-2" style="font-size: 20px; cursor: pointer">edit</span>
+                                        <span id="updateCred" class="material-icons-outlined text-warning ms-2" style="font-size: 20px; cursor: pointer" data-mdb-toggle="modal" data-mdb-target="#newLeaveBalance">edit</span>
                                     </div>
                                 </div>
 
@@ -1317,24 +1317,40 @@
             });
 
             $('#updateCred').on('click', function() {
-                let p = prompt('Update leave credits', $('#creditsCount').html());
+        $('#newLeaveBalance').modal('show');
+    });
 
-                if(parseInt(p)) {
-                    $.ajax({
-                        url: '/welcome/hr/employee/all/info/' + {{ $employee->id }} + '/updateLeaveCredits',
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            count: p
-                        },
-                        beforeSend: () => showLoaderAnimation(),
-                        success: function () {
-                            $('#creditsCount').html(p);
-                            $('.loader').addClass('sr-only');
-                        }
-                    });
+    $('#updateLeaveCreditsForm').on('submit', function(event) {
+        event.preventDefault();
+
+        let newLeaveCredits = $('#leaveCreditsInput').val();
+        let leaveType = $('#leaveType').val();
+        let employeeId = $('input[name="emp_id"]').val();
+
+        if(parseInt(newLeaveCredits)) {
+            $.ajax({
+                url: '/welcome/hr/employee/all/info/' + employeeId + '/updateLeaveCredits',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    count: newLeaveCredits,
+                    leave_type: leaveType
+                },
+                beforeSend: () => showLoaderAnimation(),
+                success: function(response) {
+                    $('#creditsCount').html(newLeaveCredits);
+                    $('#newLeaveBalance').modal('hide');
+                    $('.loader').addClass('sr-only');
+                    // Optionally, you can add a success message here
+                },
+                error: function(response) {
+                    // Handle the error case here, e.g., show an error message
                 }
             });
+        } else {
+            alert('Please enter a valid number.');
+        }
+    });
         });
     </script>
 @stop

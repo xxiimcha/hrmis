@@ -1093,4 +1093,6 @@ class Hr extends Controller
         return redirect()->back()->with('message', '<strong>Success!</strong> Salary Grade has been removed successfully');
     }
 
+
+
 }

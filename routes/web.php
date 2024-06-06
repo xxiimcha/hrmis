@@ -62,6 +62,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/salary-grades/new', [App\Http\Controllers\Authenticated\Hr::class, 'createSalaryGrade' ])->name('salary-grades.new');
         Route::post('/welcome/hr/employee/all/info/removeGrade/{salaryGradeId}', [App\Http\Controllers\Authenticated\Hr::class, 'removeSalaryGrade'])->name('salary-grades.remove');
+
+        Route::post('/welcome/hr/employee/all/info/{employee}/updateLeaveCredits', [App\Http\Controllers\Authenticated\Hr::class, 'updateLeaveCredits'])->name('update-leave-balance');
     });
 
     // Department Head Routes

@@ -214,28 +214,28 @@
 
                                     <div class="col-xl-6 mb-2">
                                         <div class="form-outline">
-                                            <input type="text" id="pe_pagibig" class="form-control form-control-lg" required name="pe_pagibig">
+                                            <input type="text" id="pe_pagibig" class="form-control form-control-lg" required name="pe_pagibig" data-format="####-####-####">
                                             <label class="form-label" for="pe_pagibig" style="margin-left: 0px;">PAG-IBIG ID No. <small class="text-muted">(required)</small></label>
                                         </div>
                                     </div>
 
                                     <div class="col-xl-6 mb-2">
                                         <div class="form-outline">
-                                            <input type="text" id="pe_philhealth" class="form-control form-control-lg" required name="pe_philhealth">
+                                            <input type="text" id="pe_philhealth" class="form-control form-control-lg" required name="pe_philhealth" data-format="##-#########-#">
                                             <label class="form-label" for="pe_philhealth" style="margin-left: 0px;">PHILHEALTH No. <small class="text-muted">(required)</small></label>
                                         </div>
                                     </div>
 
                                     <div class="col-xl-6 mb-2">
                                         <div class="form-outline">
-                                            <input type="text" id="pe_sss" class="form-control form-control-lg" required name="pe_sss">
+                                            <input type="text" id="pe_sss" class="form-control form-control-lg" required name="pe_sss" data-format="##-#######-#">
                                             <label class="form-label" for="pe_sss" style="margin-left: 0px;">SSS No. <small class="text-muted">(required)</small></label>
                                         </div>
                                     </div>
 
                                     <div class="col-xl-6 mb-2">
                                         <div class="form-outline">
-                                            <input type="text" id="pe_tin" class="form-control form-control-lg" required name="pe_tin">
+                                            <input type="text" id="pe_tin" class="form-control form-control-lg" required name="pe_tin" data-format="###-###-###-###">
                                             <label class="form-label" for="pe_tin" style="margin-left: 0px;">TIN No. <small class="text-muted">(required)</small></label>
                                         </div>
                                     </div>
@@ -661,6 +661,60 @@
 
 @section('extra_js')
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const gsisInput = document.getElementById('pe_gsis');
+
+        function formatGSISInput(value) {
+            const rawValue = value.replace(/[^0-9]/g, ''); // Remove all non-digit characters
+            const part1 = rawValue.substring(0, 4);
+            const part2 = rawValue.substring(4, 11);
+            const part3 = rawValue.substring(11, 12);
+            let formattedValue = 'CRN- ';
+
+            if (part1) formattedValue += part1;
+            if (part2) formattedValue += '-' + part2;
+            if (part3) formattedValue += '-' + part3;
+
+            return formattedValue;
+        }
+
+        gsisInput.addEventListener('input', function() {
+            const value = gsisInput.value;
+            gsisInput.value = formatGSISInput(value);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        function formatInput(value, format) {
+            let formatted = '';
+            let index = 0;
+            for (let i = 0; i < format.length; i++) {
+                if (index >= value.length) {
+                    break;
+                }
+                if (format[i] === '#') {
+                    formatted += value[index];
+                    index++;
+                } else {
+                    formatted += format[i];
+                }
+            }
+            return formatted;
+        }
+
+        function handleKeypress(event) {
+            const input = event.target;
+            const format = input.getAttribute('data-format');
+            const value = input.value.replace(/\D/g, ''); // Remove all non-digit characters
+            input.value = formatInput(value, format);
+        }
+
+        const inputs = document.querySelectorAll('input[data-format]');
+        inputs.forEach(input => {
+            input.addEventListener('input', handleKeypress);
+        });
+    });
+
     function showNextPart(currentPartId, nextPartId) {
         $('#' + currentPartId).hide();
         $('#' + nextPartId).show();
