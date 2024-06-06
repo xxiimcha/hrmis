@@ -1010,7 +1010,7 @@ class Hr extends Controller
     }
 
     public function stepNotifications(Request $request)
-    {
+    {new
         $this->checkFor3Years();
 
         $notif = StepNotification::with('employeeTinfo.employeeInfo')->get();
@@ -1019,7 +1019,6 @@ class Hr extends Controller
             $stepId = $request->stepId;
             $employee = EmployeeTable::findOrFail($request->employeeTableId);
 
-            // Remove existing StepNotification entries
             StepNotification::where('employee_table_id', $request->employeeTableId)->delete();
 
             $pdf = Pdf::loadView('download.step-notice', [
@@ -1028,7 +1027,6 @@ class Hr extends Controller
             ])->setPaper('legal', 'portrait')->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
 
             StepNotification::where('id', $stepId)->update([
-                // Update with necessary data
             ]);
 
             $employee->update([

@@ -91,7 +91,7 @@
     @endforeach
 </form>
 
-<div class="row small mt-4">    
+<div class="row small mt-4">
     @if ($lr->othersOf6A)
         <p class="form-control-static"><strong>Others :</strong> {{ $lr->othersOf6A }}</p>
     @else
@@ -140,7 +140,7 @@
 
     <div class="row small mt-4">
                             <div class="col-xl-2">
-                                
+
                             </div>
     @if ($lr->detailsOfLeave6BReason)
         <p class="form-control-static"><strong>Specify details :</strong> {{ $lr->detailsOfLeave6BReason }}</p>
@@ -198,11 +198,20 @@
                             @foreach($lr->trackingInfo as $history)
                                 <li>
                                     <div class="fw-bold small">
-                                        {!! $history['trackStatus'] . ' <span class="text-muted">as of ' . date('m-d-Y h:i A', strtotime($history['created_at'])) . '</span>' !!}
+                                        {!! $history->trackStatus . ' <span class="text-muted">as of ' . date('m-d-Y h:i A', strtotime($history->created_at)) . '</span>' !!}
                                     </div>
                                     <div class="small d-flex align-items-center">
-                                        {{ $history['message'] }} . @if($history['trackStatus'] == 'Done') <a href="#" onclick="downloadLeaveForm()" class="text-success ms-2 d-flex align-items-center"><span class="material-icons-outlined me-1">download</span> <strong>Download form</strong></a> @endif
+                                        {{ $history->message }}
+                                        @if($history->trackStatus == 'Done')
+                                            <a href="#" onclick="downloadLeaveForm()" class="text-success ms-2 d-flex align-items-center">
+                                                <span class="material-icons-outlined me-1">download</span>
+                                                <strong>Download form</strong>
+                                            </a>
+                                        @endif
                                     </div>
+                                    @if($history->trackStatus == 'Rejected')
+                                        <div class="small text-danger ms-2 mt-1"><strong>Reason: {{ $lr->disapprovedMessage }}</strong></div>
+                                    @endif
                                 </li>
                             @endforeach
                         </ol>
