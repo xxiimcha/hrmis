@@ -501,11 +501,10 @@ class Hr extends Controller
             'employeeMembership',
             'employeeReference',
             'employeeIssuedId'
-        ])->find($employeeNo);
+        ])->where('id', $employeeNo)->first();
 
         $department = DB::table('departments')->get();
 
-        // get salary grades for the employee
         $salaryGrades = SalaryGrade::where('emp_id', $employeeNo)->get();
 
         return view('hr.employee-profile', [
@@ -1044,19 +1043,7 @@ class Hr extends Controller
             return redirect()->back()->with('message', '<strong>Success!</strong>');
         }
 
-        return view('hr.hrmenu', ['notif' => $notif]);
-    }
-
-
-    public function listSalaryGrades($employee_id)
-    {
-        $salaryGrades = SalaryGrade::where('emp_id', $employee_id)->get();
-        $employee = Employee::find($employee_id);
-
-        return view('hr.list-salary-grades', [
-            'salaryGrades' => $salaryGrades,
-            'employee' => $employee
-        ]);
+        return view('hr.step-notifications', ['notif' => $notif]);
     }
 
     public function createSalaryGrade(Request $request)
@@ -1064,6 +1051,7 @@ class Hr extends Controller
         if ($request->isMethod('post')) {
 
             $request->validate([
+                'emp_id' => 'required|exists:employee_tables,id',
                 'step_1' => 'nullable|numeric',
                 'step_2' => 'nullable|numeric',
                 'step_3' => 'nullable|numeric',
@@ -1074,20 +1062,37 @@ class Hr extends Controller
                 'step_8' => 'nullable|numeric',
             ]);
 
-            SalaryGrade::create($request->only([
-                'step_1',
-                'step_2',
-                'step_3',
-                'step_4',
-                'step_5',
-                'step_6',
-                'step_7',
-                'step_8',
-            ]));
+            SalaryGrade::create([
+                'emp_id' => $request->emp_id,
+                'step_1' => $request->step_1,
+                'step_2' => $request->step_2,
+                'step_3' => $request->step_3,
+                'step_4' => $request->step_4,
+                'step_5' => $request->step_5,
+                'step_6' => $request->step_6,
+                'step_7' => $request->step_7,
+                'step_8' => $request->step_8,
+            ]);
 
-            return redirect()->route('salary-grades.list')->with('success', 'Salary grade created successfully.');
+            return redirect()->back()->with('message', '<strong>Success!</strong> Salary Grade has been added successfully');
         }
 
-        return view('hr.create-salary-grade');
+        return view('hr.new-salary-grade');
     }
+
+    public function removeSalaryGrade(Request $request, $salaryGradeId)
+    {
+        // Validate that the salary grade exists
+        $salaryGrade = SalaryGrade::find($salaryGradeId);
+
+        if (!$salaryGrade) {
+            return redirect()->back()->with('error', 'Salary Grade not found');
+        }
+
+        // Delete the salary grade
+        $salaryGrade->delete();
+
+        return redirect()->back()->with('message', '<strong>Success!</strong> Salary Grade has been removed successfully');
+    }
+
 }

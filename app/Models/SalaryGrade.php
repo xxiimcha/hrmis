@@ -12,6 +12,7 @@ class SalaryGrade extends Model
     protected $table = 'salary_grades';
 
     protected $fillable = [
+        'emp_id',
         'step_1',
         'step_2',
         'step_3',

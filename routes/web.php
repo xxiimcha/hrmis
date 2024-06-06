@@ -60,11 +60,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/stepNotif', [ App\Http\Controllers\Authenticated\Hr::class, 'checkFor3Years' ]);
         Route::match(['GET', 'POST'], '/employee/step-notifications', [ App\Http\Controllers\Authenticated\Hr::class, 'stepNotifications' ]);
 
-        // Salary Grade Management routes
-        Route::get('/salary-grade/list', [App\Http\Controllers\Authenticated\Hr::class, 'listSalaryGrades'])->name('salary-grades.list');
-        Route::match(['GET', 'POST'], '/salary-grade/new', [App\Http\Controllers\Authenticated\Hr::class, 'createSalaryGrade'])->name('salary-grades.new');
-        Route::match(['GET', 'POST'], '/salary-grade/edit/{id}', [App\Http\Controllers\Authenticated\Hr::class, 'editSalaryGrade'])->name('salary-grades.edit');
-        Route::post('/salary-grade/delete/{id}', [App\Http\Controllers\Authenticated\Hr::class, 'deleteSalaryGrade'])->name('salary-grades.delete');
+        Route::post('/salary-grades/new', [App\Http\Controllers\Authenticated\Hr::class, 'createSalaryGrade' ])->name('salary-grades.new');
+        Route::post('/welcome/hr/employee/all/info/removeGrade/{salaryGradeId}', [App\Http\Controllers\Authenticated\Hr::class, 'removeSalaryGrade'])->name('salary-grades.remove');
     });
 
     // Department Head Routes

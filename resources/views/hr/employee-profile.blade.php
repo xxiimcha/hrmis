@@ -4,6 +4,7 @@
     @include('includes.hrmenu')
     @include('includes.new-service-record')
     @include('includes.new-leave-card')
+    @include('includes.new-salary-grade')
 
     <main class="putMtop">
         <div class="container">
@@ -1230,15 +1231,15 @@
                                 </div>
                             </div>
 
-                            <div class="tab-pane fade py-2" id="salary-grade" role="tabpanel" aria-labelledby="salary-grade0">
-                                <button class="btn btn-light btn-sm shadow-sm" id="dlc">
+                            <div class="tab-pane fade py-2" id="salary-grade" role="tabpanel" aria-labelledby="salary-grade">
+                                <button class="btn btn-light btn-sm shadow-sm" id="dls">
                                     <div class="d-flex align-items-center">
                                         <span class="material-icons-outlined me-2 text-primary" style="font-size: 20px">download</span>
                                         Download as PDF
                                     </div>
                                 </button>
 
-                                <button class="btn btn-light btn-sm shadow-sm" data-mdb-toggle="modal" data-mdb-target="#newSCard">
+                                <button class="btn btn-light btn-sm shadow-sm" data-mdb-toggle="modal" data-mdb-target="#newSalaryGrade">
                                     <div class="d-flex align-items-center">
                                         <span class="material-icons-outlined me-2 text-warning" style="font-size: 20px">add</span>
                                         Add
@@ -1249,7 +1250,7 @@
                                     <table class="table table-sm table-bordered text-nowrap">
                                         <thead class="text-center">
                                             <tr>
-                                                <th class="fw-bold">Employee Number</th>
+                                                <th class="fw-bold">Salary Grade</th>
                                                 <th class="fw-bold">Step 1</th>
                                                 <th class="fw-bold">Step 2</th>
                                                 <th class="fw-bold">Step 3</th>
@@ -1261,11 +1262,10 @@
                                                 <th class="fw-bold">Action</th>
                                             </tr>
                                         </thead>
-
                                         <tbody>
-                                            @foreach ($salaryGrades as $grade)
+                                            @foreach ($salaryGrades as $index => $grade)
                                                 <tr class="text-center">
-                                                    <td>{{ $grade->emp_id }}</td>
+                                                    <td>{{ $index + 1 }}</td>
                                                     <td>{{ number_format($grade->step_1, 2) }}</td>
                                                     <td>{{ number_format($grade->step_2, 2) }}</td>
                                                     <td>{{ number_format($grade->step_3, 2) }}</td>
@@ -1275,10 +1275,13 @@
                                                     <td>{{ number_format($grade->step_7, 2) }}</td>
                                                     <td>{{ number_format($grade->step_8, 2) }}</td>
                                                     <td>
-                                                        <span class="material-icons-outlined text-warning" style="cursor: pointer" data-mdb-toggle="modal" data-mdb-target="#editGrade_{{ $grade->id }}">edit</span>
-                                                        <a href="/welcome/hr/employee/all/info/{{ $employee->id }}/removeGrade/{{ $grade->id }}">
+                                                        <a href="#" onclick="event.preventDefault(); document.getElementById('remove-salary-grade-form-{{ $grade->id }}').submit();">
                                                             <span class="material-icons-outlined text-danger ms-2">remove</span>
                                                         </a>
+                                                        <form id="remove-salary-grade-form-{{ $grade->id }}" action="{{ route('salary-grades.remove', ['salaryGradeId' => $grade->id]) }}" method="POST" style="display: none;">
+                                                            @csrf
+                                                            @method('POST')
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             @endforeach
