@@ -87,13 +87,95 @@
                                     </div>
                                 </div>
 
-                                <div class="row small">
+                                <!-- <div class="row small">
                                     <div class="col-xl-2">
                                         <strong>Leave Credits :</strong>
                                     </div>
                                     <div class="col-xl-10 d-flex align-items-center">
                                         <span id="creditsCount">{{ $employee->leaveCredits }}</span>
                                         <span id="updateCred" class="material-icons-outlined text-warning ms-2" style="font-size: 20px; cursor: pointer" data-mdb-toggle="modal" data-mdb-target="#newLeaveBalance">edit</span>
+                                    </div>
+                                </div> -->
+
+                                <a href="#" role="button" class="btn btn-light btn-sm shadow-sm my-3" id="updateCred" data-mdb-toggle="modal" data-mdb-target="#newLeaveBalance">
+                                    <div class="d-flex align-items-center">
+                                        <span class="material-icons-outlined text-warning ms-2" style="font-size: 20px; cursor: pointer">edit</span>
+                                        Edit leaves
+                                    </div>
+                                </a>
+
+                                <div class="accordion" id="leaveDetails">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingLeaveCredits">
+                                            <button class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#leave-credits-accordion" aria-expanded="true" aria-controls="leave-credits-accordion">
+                                                Leave Credits
+                                            </button>
+                                        </h2>
+
+                                        <div id="leave-credits-accordion" class="accordion-collapse collapse show" aria-labelledby="headingLeaveCredits" data-mdb-parent="#leaveDetails">
+                                            <div class="accordion-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-bordered text-nowrap">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="fw-bold">Leave Type</th>
+                                                                <th class="fw-bold">Credits</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Vacation Leave</td>
+                                                                <td>{{ $employee->vacationLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Sick Leave</td>
+                                                                <td>{{ $employee->sickLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Mandatory Leave</td>
+                                                                <td>{{ $employee->mandatoryLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Maternity Leave</td>
+                                                                <td>{{ $employee->maternityLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Paternity Leave</td>
+                                                                <td>{{ $employee->paternityLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Special Privilege Leave</td>
+                                                                <td>{{ $employee->specialPrivilegeLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Solo Parent Leave</td>
+                                                                <td>{{ $employee->soloParentLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Study Leave</td>
+                                                                <td>{{ $employee->studyLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Rehabilitation Leave</td>
+                                                                <td>{{ $employee->rehabilitationLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Special Leave for Women</td>
+                                                                <td>{{ $employee->specialLeaveForWomen }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Special Emergency Leave</td>
+                                                                <td>{{ $employee->specialEmergencyLeave }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Adoption Leave</td>
+                                                                <td>{{ $employee->adoptionLeave }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1275,6 +1357,7 @@
                                                     <td>{{ number_format($grade->step_7, 2) }}</td>
                                                     <td>{{ number_format($grade->step_8, 2) }}</td>
                                                     <td>
+                                                        <span class="material-icons-outlined text-warning" style="cursor: pointer" data-mdb-toggle="modal" data-mdb-target="#editSalaryGrade_{{ $grade->id }}">edit</span>
                                                         <a href="#" onclick="event.preventDefault(); document.getElementById('remove-salary-grade-form-{{ $grade->id }}').submit();">
                                                             <span class="material-icons-outlined text-danger ms-2">remove</span>
                                                         </a>
@@ -1284,6 +1367,60 @@
                                                         </form>
                                                     </td>
                                                 </tr>
+
+                                                <!-- Edit Salary Grade Modal -->
+                                                <div class="modal fade" id="editSalaryGrade_{{ $grade->id }}" tabindex="-1" aria-labelledby="editSalaryGradeLabel_{{ $grade->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="editSalaryGradeLabel_{{ $grade->id }}">Edit Salary Grade</h5>
+                                                                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form id="editSalaryGradeForm_{{ $grade->id }}">
+                                                                    @csrf
+                                                                    @method('POST')
+                                                                    <input type="text" name="salary_grade_id" value="{{ $grade->id }}">
+
+                                                                    <div class="mb-3">
+                                                                        <label for="step1_{{ $grade->id }}" class="form-label">Step 1</label>
+                                                                        <input type="number" class="form-control" id="step1_{{ $grade->id }}" name="step1" value="{{ $grade->step_1 }}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="step2_{{ $grade->id }}" class="form-label">Step 2</label>
+                                                                        <input type="number" class="form-control" id="step2_{{ $grade->id }}" name="step2" value="{{ $grade->step_2 }}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="step3_{{ $grade->id }}" class="form-label">Step 3</label>
+                                                                        <input type="number" class="form-control" id="step3_{{ $grade->id }}" name="step3" value="{{ $grade->step_3 }}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="step4_{{ $grade->id }}" class="form-label">Step 4</label>
+                                                                        <input type="number" class="form-control" id="step4_{{ $grade->id }}" name="step4" value="{{ $grade->step_4 }}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="step5_{{ $grade->id }}" class="form-label">Step 5</label>
+                                                                        <input type="number" class="form-control" id="step5_{{ $grade->id }}" name="step5" value="{{ $grade->step_5 }}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="step6_{{ $grade->id }}" class="form-label">Step 6</label>
+                                                                        <input type="number" class="form-control" id="step6_{{ $grade->id }}" name="step6" value="{{ $grade->step_6 }}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="step7_{{ $grade->id }}" class="form-label">Step 7</label>
+                                                                        <input type="number" class="form-control" id="step7_{{ $grade->id }}" name="step7" value="{{ $grade->step_7 }}">
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="step8_{{ $grade->id }}" class="form-label">Step 8</label>
+                                                                        <input type="number" class="form-control" id="step8_{{ $grade->id }}" name="step8" value="{{ $grade->step_8 }}">
+                                                                    </div>
+
+                                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -1317,40 +1454,106 @@
             });
 
             $('#updateCred').on('click', function() {
-        $('#newLeaveBalance').modal('show');
-    });
-
-    $('#updateLeaveCreditsForm').on('submit', function(event) {
-        event.preventDefault();
-
-        let newLeaveCredits = $('#leaveCreditsInput').val();
-        let leaveType = $('#leaveType').val();
-        let employeeId = $('input[name="emp_id"]').val();
-
-        if(parseInt(newLeaveCredits)) {
-            $.ajax({
-                url: '/welcome/hr/employee/all/info/' + employeeId + '/updateLeaveCredits',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    count: newLeaveCredits,
-                    leave_type: leaveType
-                },
-                beforeSend: () => showLoaderAnimation(),
-                success: function(response) {
-                    $('#creditsCount').html(newLeaveCredits);
-                    $('#newLeaveBalance').modal('hide');
-                    $('.loader').addClass('sr-only');
-                    // Optionally, you can add a success message here
-                },
-                error: function(response) {
-                    // Handle the error case here, e.g., show an error message
-                }
+                $('#newLeaveBalance').modal('show');
             });
-        } else {
-            alert('Please enter a valid number.');
-        }
-    });
+
+            $(document).ready(function() {
+                $('#updateLeaveCreditsForm').on('submit', function(event) {
+                    event.preventDefault();
+
+                    let newLeaveCredits = $('#leaveCreditsInput').val();
+                    let leaveType = $('#leaveType').val();
+                    let employeeId = $('input[name="emp_id"]').val();
+
+                    if (parseInt(newLeaveCredits)) {
+                        $.ajax({
+                            url: '/welcome/hr/employee/all/info/' + employeeId + '/updateLeaveCredits',
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                count: newLeaveCredits,
+                                leave_type: leaveType,
+                                id: employeeId
+                            },
+                            beforeSend: () => showLoaderAnimation(),
+                            success: function(response) {
+                                console.log('Success:', response);
+                                if (leaveType === 'mandatoryLeave') {
+                                    $('#creditsCountMandatoryLeave').html(newLeaveCredits);
+                                } else if (leaveType === 'maternityLeave') {
+                                    $('#creditsCountMaternityLeave').html(newLeaveCredits);
+                                }
+                                $('#newLeaveBalance').modal('hide');
+                                $('.loader').addClass('sr-only');
+                            },
+                            error: function(response) {
+                                console.error('Error:', response);
+                                alert('Error updating leave credits.');
+                            }
+                        });
+                    } else {
+                        alert('Please enter a valid number.');
+                    }
+                });
+            });
+
         });
+
+        $(document).ready(function() {
+            $('.edit-salary-grade-form').on('submit', function(event) {
+                event.preventDefault();
+
+                let form = $(this);
+                let gradeId = form.find('input[name="grade_id"]').val(); // Get the gradeId from a hidden input
+                let step1 = form.find('input[name="step1"]').val();
+                let step2 = form.find('input[name="step2"]').val();
+                let step3 = form.find('input[name="step3"]').val();
+                let step4 = form.find('input[name="step4"]').val();
+                let step5 = form.find('input[name="step5"]').val();
+                let step6 = form.find('input[name="step6"]').val();
+                let step7 = form.find('input[name="step7"]').val();
+                let step8 = form.find('input[name="step8"]').val();
+
+                // Debugging: log form data
+                console.log({
+                    gradeId,
+                    step1,
+                    step2,
+                    step3,
+                    step4,
+                    step5,
+                    step6,
+                    step7,
+                    step8
+                });
+
+                $.ajax({
+                    url: '/welcome/hr/employee/all/info/updateSalaryGrade/' + gradeId,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        step1: step1,
+                        step2: step2,
+                        step3: step3,
+                        step4: step4,
+                        step5: step5,
+                        step6: step6,
+                        step7: step7,
+                        step8: step8
+                    },
+                    success: function(response) {
+                        console.log(response); // Debugging: log server response
+                        // Update the salary grade display
+                        location.reload(); // Reload the page to reflect changes
+                    },
+                    error: function(response) {
+                        console.error('Error updating salary grade:', response);
+                        alert('Error updating salary grade.');
+                    }
+                });
+            });
+        });
+
+
     </script>
 @stop

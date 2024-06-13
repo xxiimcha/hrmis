@@ -768,10 +768,6 @@ class Hr extends Controller
         ]);
     }
 
-    function updateLeaveCredits(Request $request, string $employeeNo) {
-        EmployeeTable::find($employeeNo)->update(['leaveCredits' => $request->count]);
-    }
-
     // Service Record
     public function addServiceRecord(Request $request, string $employeeNo) {
         $validation_patterns = [
@@ -1087,12 +1083,100 @@ class Hr extends Controller
             return redirect()->back()->with('error', 'Salary Grade not found');
         }
 
-        // Delete the salary grade
         $salaryGrade->delete();
 
         return redirect()->back()->with('message', '<strong>Success!</strong> Salary Grade has been removed successfully');
     }
 
+    public function updateSalaryGrade(Request $request, $gradeId)
+    {
+        \Log::info('Incoming request data:', $request->all()); // Debugging: log incoming data
+
+        try {
+            $grade = SalaryGrade::findOrFail($gradeId);
+
+            $grade->step_1 = $request->input('step1');
+            $grade->step_2 = $request->input('step2');
+            $grade->step_3 = $request->input('step3');
+            $grade->step_4 = $request->input('step4');
+            $grade->step_5 = $request->input('step5');
+            $grade->step_6 = $request->input('step6');
+            $grade->step_7 = $request->input('step7');
+            $grade->step_8 = $request->input('step8');
+
+            $grade->save();
+
+            \Log::info('Salary grade updated successfully:', $grade); // Debugging: log updated grade
+
+            return response()->json(['message' => 'Salary grade updated successfully.']);
+        } catch (\Exception $e) {
+            \Log::error('Error updating salary grade: ' . $e->getMessage());
+            return response()->json(['message' => 'Error updating salary grade.'], 500);
+        }
+    }
+
+    public function updateLeaveCredits(Request $request, $employeeId)
+    {
+        try {
+            $employee = Employee::findOrFail($employeeId);
+            $leaveType = $request->input('leave_type');
+            $newCredits = $request->input('count');
+
+            // Log the received input
+            \Log::info('Updating leave credits', [
+                'employeeId' => $employeeId,
+                'leaveType' => $leaveType,
+                'newCredits' => $newCredits
+            ]);
+
+            // Update the respective leave type
+            switch ($leaveType) {
+                case 'mandatoryLeave':
+                    $employee->mandatoryLeave = $newCredits;
+                    break;
+                case 'maternityLeave':
+                    $employee->maternityLeave = $newCredits;
+                    break;
+                case 'paternityLeave':
+                    $employee->paternityLeave = $newCredits;
+                    break;
+                case 'specialPrivilegeLeave':
+                    $employee->specialPrivilegeLeave = $newCredits;
+                    break;
+                case 'soloParentLeave':
+                    $employee->soloParentLeave = $newCredits;
+                    break;
+                case 'studyLeave':
+                    $employee->studyLeave = $newCredits;
+                    break;
+                case 'rehabilitationLeave':
+                    $employee->rehabilitationLeave = $newCredits;
+                    break;
+                case 'specialLeaveForWomen':
+                    $employee->specialLeaveForWomen = $newCredits;
+                    break;
+                case 'specialEmergencyLeave':
+                    $employee->specialEmergencyLeave = $newCredits;
+                    break;
+                case 'adoptionLeave':
+                    $employee->adoptionLeave = $newCredits;
+                    break;
+                default:
+                    throw new \Exception('Invalid leave type');
+            }
+
+            $employee->save();
+
+            return response()->json(['message' => 'Leave credits updated successfully.']);
+        } catch (\Exception $e) {
+            // Log the error message
+            \Log::error('Error updating leave credits: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json(['message' => 'Error updating leave credits: ' . $e->getMessage()], 500);
+        }
+    }
 
 
 }

@@ -104,4 +104,5 @@ class Em extends Controller
 
         return view('employee.profile', [ 'employee' => $employee, 'departments' => $department ]);
     }
+
 }
