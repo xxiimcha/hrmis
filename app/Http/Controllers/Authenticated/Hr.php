@@ -74,6 +74,25 @@ class Hr extends Controller
         ]);
     }
 
+    public function departments()
+    {
+        $departments = Department::all();
+        $employeesByDepartment = [];
+
+        foreach ($departments as $department) {
+            $employees = DB::table('employee_service_records')
+                ->join('employee_personal_information', 'employee_service_records.employee_table_id', '=', 'employee_personal_information.id')
+                ->where('employee_service_records.department_id', $department->id)
+                ->select('employee_personal_information.*')
+                ->get();
+
+            $employeesByDepartment[$department->id] = $employees;
+        }
+
+        return view('hr.departments', compact('departments', 'employeesByDepartment'));
+    }
+
+
     public function leaveRequestReceived(Request $request) {
         $allReceivedRequest = EmployeeTable::join('employee_personal_information', 'employee_tables.employee_personal_information_id', '=', 'employee_personal_information.id')
             ->join('departments', 'employee_tables.department_id', '=', 'departments.id')

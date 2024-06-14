@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
         Route::match(['GET', 'POST'], '/employee/all/info/{employeeNo}', [ App\Http\Controllers\Authenticated\Hr::class, 'info' ]);
         Route::match(['GET', 'POST'], '/employee/all/info/{employeeNo}/edit-details', [ App\Http\Controllers\Authenticated\Hr::class, 'editEmployeeInfo' ]);
         Route::post('/employee/all/info/{employeeNo}/updateLeaveCredits', [ App\Http\Controllers\Authenticated\Hr::class, 'updateLeaveCredits' ]);
+        Route::get('/departments', [App\Http\Controllers\Authenticated\Hr::class, 'departments'])->name('departments.index');
 
         # Service Record
         Route::get('/employee/all/info/{employeeNo}/downloadServiceRecord', [ App\Http\Controllers\Authenticated\DownloadFiles::class, 'downloadServiceRecord' ]);

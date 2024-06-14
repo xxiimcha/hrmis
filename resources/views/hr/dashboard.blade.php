@@ -11,15 +11,17 @@
 
                 <div class="row">
                     <div class="col-xl-4">
-                        <div class="card bg-warning text-white">
-                            <div class="card-header d-flex align-items-center">
-                                <span class="material-icons-outlined me-2">groups</span>
-                                Employee
+                        <a href="{{ route('departments.index') }}" class="text-decoration-none">
+                            <div class="card bg-warning text-white">
+                                <div class="card-header d-flex align-items-center">
+                                    <span class="material-icons-outlined me-2">groups</span>
+                                    Employee
+                                </div>
+                                <div class="card-body fw-bold py-2 h4">
+                                    {{ $employee }}
+                                </div>
                             </div>
-                            <div class="card-body fw-bold py-2 h4">
-                                {{ $employee }}
-                            </div>
-                        </div>
+                        </a>
                     </div>
 
                     @php

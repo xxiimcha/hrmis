@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ URL::asset('css/custom.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('css/cropper.min.css'); }}" >
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lobster&display=swap">
-    <script src="{{ URL::asset('js/jquery-3.3.1.min.js') }}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
     <link rel="icon" href="{{ URL::asset('system-images/logo.png') }}" type="image/gif">
 
@@ -26,11 +26,15 @@
     @yield('content')
 
     @yield('extra_js')
+
+    <script src="{{ URL::asset('js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ URL::asset('js/mdb.min.js') }}"></script>
     <script src="{{ URL::asset('js/custom.js') }}"></script>
     <script src='{{ URL::asset("js/cropper.min.js") }}'></script>
     <script src="{{ URL::asset('js/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('js/datatables/js/data-table.js') }}"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 
     <script>
         $(document).ready(function() {
