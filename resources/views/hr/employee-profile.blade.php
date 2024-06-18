@@ -1452,51 +1452,6 @@
                     alert('There is no data to print.');
                 }
             });
-
-            $('#updateCred').on('click', function() {
-                $('#newLeaveBalance').modal('show');
-            });
-
-            $(document).ready(function() {
-                $('#updateLeaveCreditsForm').on('submit', function(event) {
-                    event.preventDefault();
-
-                    let newLeaveCredits = $('#leaveCreditsInput').val();
-                    let leaveType = $('#leaveType').val();
-                    let employeeId = $('input[name="emp_id"]').val();
-
-                    if (parseInt(newLeaveCredits)) {
-                        $.ajax({
-                            url: '/welcome/hr/employee/all/info/' + employeeId + '/updateLeaveCredits',
-                            type: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                count: newLeaveCredits,
-                                leave_type: leaveType,
-                                id: employeeId
-                            },
-                            beforeSend: () => showLoaderAnimation(),
-                            success: function(response) {
-                                console.log('Success:', response);
-                                if (leaveType === 'mandatoryLeave') {
-                                    $('#creditsCountMandatoryLeave').html(newLeaveCredits);
-                                } else if (leaveType === 'maternityLeave') {
-                                    $('#creditsCountMaternityLeave').html(newLeaveCredits);
-                                }
-                                $('#newLeaveBalance').modal('hide');
-                                $('.loader').addClass('sr-only');
-                            },
-                            error: function(response) {
-                                console.error('Error:', response);
-                                alert('Error updating leave credits.');
-                            }
-                        });
-                    } else {
-                        alert('Please enter a valid number.');
-                    }
-                });
-            });
-
         });
 
         $(document).ready(function() {
@@ -1554,6 +1509,42 @@
             });
         });
 
+        $(document).ready(function() {
+            // Submit the form to update leave credits
+            $('#updateLeaveCreditsForm').on('submit', function(event) {
+                event.preventDefault();
+
+                let newLeaveCredits = $('#leaveCreditsInput').val();
+                let leaveType = $('#leaveType').val();
+                let employeeId = $('input[name="emp_id"]').val();
+
+                if (parseInt(newLeaveCredits)) {
+                    $.ajax({
+                        url: '/welcome/hr/employee/all/info/' + employeeId + '/updateLeaveCredits',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            count: newLeaveCredits,
+                            leave_type: leaveType,
+                            id: employeeId
+                        },
+                        success: function(response) {
+                            toastr.success('Leave credits updated successfully.');
+                            $('#newLeaveBalance').modal('hide');
+                            setTimeout(function() {
+                                location.reload(); // Reload the page to reflect changes
+                            }, 1500); // Adjust the timeout duration as needed
+                        },
+                        error: function(response) {
+                            toastr.error('Error updating leave credits.');
+                            console.error('Error updating leave credits:', response);
+                        }
+                    });
+                } else {
+                    toastr.warning('Please enter a valid number.');
+                }
+            });
+        });
 
     </script>
 @stop

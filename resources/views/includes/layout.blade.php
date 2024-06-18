@@ -29,6 +29,12 @@
 
     @yield('extra_js')
 
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <script src="{{ URL::asset('js/mdb.min.js') }}"></script>
     <script src="{{ URL::asset('js/custom.js') }}"></script>
     <script src='{{ URL::asset("js/cropper.min.js") }}'></script>

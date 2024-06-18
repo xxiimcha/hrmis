@@ -1138,65 +1138,26 @@ class Hr extends Controller
 
     public function updateLeaveCredits(Request $request, $employeeId)
     {
-        try {
-            $employee = Employee::findOrFail($employeeId);
-            $leaveType = $request->input('leave_type');
-            $newCredits = $request->input('count');
+        $request->validate([
+            'count' => 'required|numeric',
+            'leave_type' => 'required|string'
+        ]);
 
-            // Log the received input
-            \Log::info('Updating leave credits', [
-                'employeeId' => $employeeId,
-                'leaveType' => $leaveType,
-                'newCredits' => $newCredits
-            ]);
+        // Find the employee
+        $employee = EmployeeTable::find($employeeId);
 
-            // Update the respective leave type
-            switch ($leaveType) {
-                case 'mandatoryLeave':
-                    $employee->mandatoryLeave = $newCredits;
-                    break;
-                case 'maternityLeave':
-                    $employee->maternityLeave = $newCredits;
-                    break;
-                case 'paternityLeave':
-                    $employee->paternityLeave = $newCredits;
-                    break;
-                case 'specialPrivilegeLeave':
-                    $employee->specialPrivilegeLeave = $newCredits;
-                    break;
-                case 'soloParentLeave':
-                    $employee->soloParentLeave = $newCredits;
-                    break;
-                case 'studyLeave':
-                    $employee->studyLeave = $newCredits;
-                    break;
-                case 'rehabilitationLeave':
-                    $employee->rehabilitationLeave = $newCredits;
-                    break;
-                case 'specialLeaveForWomen':
-                    $employee->specialLeaveForWomen = $newCredits;
-                    break;
-                case 'specialEmergencyLeave':
-                    $employee->specialEmergencyLeave = $newCredits;
-                    break;
-                case 'adoptionLeave':
-                    $employee->adoptionLeave = $newCredits;
-                    break;
-                default:
-                    throw new \Exception('Invalid leave type');
-            }
-
-            $employee->save();
-
-            return response()->json(['message' => 'Leave credits updated successfully.']);
-        } catch (\Exception $e) {
-            // Log the error message
-            \Log::error('Error updating leave credits: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return response()->json(['message' => 'Error updating leave credits: ' . $e->getMessage()], 500);
+        if (!$employee) {
+            return response()->json(['error' => 'Employee not found'], 404);
         }
+
+        // Update the leave credits for the specified leave type
+        $leaveType = $request->input('leave_type');
+        $count = $request->input('count');
+
+        $employee->{$leaveType} = $count;
+        $employee->save();
+
+        return response()->json(['success' => 'Leave credits updated successfully']);
     }
 
 

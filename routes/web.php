@@ -48,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/employee/all/info/{employeeNo}/removeServiceRecord/{srid}', [ App\Http\Controllers\Authenticated\Hr::class, 'removeServiceRecord' ]);
 
         # Leave Card
+        Route::get('/welcome/hr/employee/all/info/{employeeId}/getLeaveData', [App\Http\Controllers\Authenticated\Hr::class, 'getLeaveData']);
         Route::post('/employee/all/info/{employeeNo}/addToLeaveCard', [ App\Http\Controllers\Authenticated\Hr::class, 'addToLeaveCard' ]);
         Route::get('/employee/all/info/{employeeNo}/downloadLeaveCard', [ App\Http\Controllers\Authenticated\DownloadFiles::class, 'downloadLeaveCard' ]);
         Route::get('/employee/all/info/{employeeNo}/removeLeaveCard/{lcid}', [ App\Http\Controllers\Authenticated\Hr::class, 'removeLeaveCard' ]);
@@ -58,15 +59,15 @@ Route::middleware(['auth'])->group(function () {
         Route::match(['GET', 'POST'], '/leave/received/{type}/{lrId}', [ App\Http\Controllers\Authenticated\Hr::class, 'approvalOrDis' ]);
         Route::match(['GET', 'POST'], '/account-settings', [ App\Http\Controllers\Authenticated\Hr::class, 'account' ]);
 
-        Route::get('/welcome/hr/stepNotif', [App\Http\Controllers\Authenticated\Hr::class, 'stepNotifications'])->name('step.increment');
-        Route::post('/welcome/hr/stepNotif', [App\Http\Controllers\Authenticated\Hr::class, 'stepNotifications']);
+        Route::get('/stepNotif', [ App\Http\Controllers\Authenticated\Hr::class, 'checkFor3Years' ]);
         Route::match(['GET', 'POST'], '/employee/step-notifications', [ App\Http\Controllers\Authenticated\Hr::class, 'stepNotifications' ]);
 
         Route::post('/salary-grades/new', [App\Http\Controllers\Authenticated\Hr::class, 'createSalaryGrade' ])->name('salary-grades.new');
         Route::post('/welcome/hr/employee/all/info/removeGrade/{salaryGradeId}', [App\Http\Controllers\Authenticated\Hr::class, 'removeSalaryGrade'])->name('salary-grades.remove');
         Route::post('/welcome/hr/employee/all/info/updateSalaryGrade/{gradeId}', [App\Http\Controllers\Authenticated\Hr::class, 'updateSalaryGrade'])->name('salary-grades.update');
+        Route::post('/welcome/hr/employee/all/info/{employeeId}/updateLeaveCredits', [App\Http\Controllers\Authenticated\Hr::class, 'updateLeaveCredits']);
 
-        Route::post('/welcome/hr/employee/all/info/{employee}/updateLeaveCredits', [App\Http\Controllers\Authenticated\Hr::class, 'updateLeaveCredits'])->name('update-leave-balance');
+        //Route::post('/welcome/hr/employee/all/info/{employee}/updateLeaveCredits', [App\Http\Controllers\Authenticated\Hr::class, 'updateLeaveCredits'])->name('update-leave-balance');
     });
 
     // Department Head Routes
