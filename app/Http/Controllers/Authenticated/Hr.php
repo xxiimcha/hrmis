@@ -1008,27 +1008,27 @@ class Hr extends Controller
         return view('hr.account-settings', [ 'departments' => $departments ]);
     }
 
-    public function checkFor3Years(){
-        $employee = EmployeeTable::all() ;
+    public function checkFor3Years()
+    {
+        $employees = EmployeeTable::all();
 
-        foreach($employee as $emp){
-            $checkIfExist = StepNotification::where('employee_table_id', $emp->id)->orderBy('created_at', 'DESC')->first();
+        foreach ($employees as $employee) {
+            $checkIfExist = StepNotification::where('employee_table_id', $employee->id)->orderBy('created_at', 'DESC')->first();
 
-           if(now()->diffInYears(\Carbon::parse($emp->entered_date)) >= 3 && (!$checkIfExist || $checkIfExist->managed == 0)){
+            if (now()->diffInYears(Carbon::parse($employee->entered_date)) >= 3 && (!$checkIfExist || $checkIfExist->managed == 0)) {
                 $stepNotif = new StepNotification;
                 $stepNotif->message = "already reach 3 years in service. Update record if necessary";
-                $stepNotif->employee_table_id = $emp->id;
+                $stepNotif->employee_table_id = $employee->id;
                 $stepNotif->save();
-
             }
         }
     }
 
     public function stepNotifications(Request $request)
-    {new
+    {
         $this->checkFor3Years();
 
-        $notif = StepNotification::with('employeeTinfo.employeeInfo')->get();
+        $notif = StepNotification::with('employeeInfo')->get();
 
         if ($request->isMethod('post')) {
             $stepId = $request->stepId;
@@ -1036,12 +1036,13 @@ class Hr extends Controller
 
             StepNotification::where('employee_table_id', $request->employeeTableId)->delete();
 
-            $pdf = Pdf::loadView('download.step-notice', [
+            $pdf = PDF::loadView('download.step-notice', [
                 'employee' => $employee,
                 'data' => $request->all()
             ])->setPaper('legal', 'portrait')->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
 
             StepNotification::where('id', $stepId)->update([
+                // Your update logic here
             ]);
 
             $employee->update([
@@ -1053,7 +1054,8 @@ class Hr extends Controller
 
             return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
 
-            return redirect()->back()->with('message', '<strong>Success!</strong>');
+            // Redirection after download (won't execute due to return above)
+            // return redirect()->back()->with('message', '<strong>Success!</strong>');
         }
 
         return view('hr.step-notifications', ['notif' => $notif]);

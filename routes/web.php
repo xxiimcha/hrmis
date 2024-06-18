@@ -58,7 +58,8 @@ Route::middleware(['auth'])->group(function () {
         Route::match(['GET', 'POST'], '/leave/received/{type}/{lrId}', [ App\Http\Controllers\Authenticated\Hr::class, 'approvalOrDis' ]);
         Route::match(['GET', 'POST'], '/account-settings', [ App\Http\Controllers\Authenticated\Hr::class, 'account' ]);
 
-        Route::get('/stepNotif', [ App\Http\Controllers\Authenticated\Hr::class, 'checkFor3Years' ]);
+        Route::get('/welcome/hr/stepNotif', [App\Http\Controllers\Authenticated\Hr::class, 'stepNotifications'])->name('step.increment');
+        Route::post('/welcome/hr/stepNotif', [App\Http\Controllers\Authenticated\Hr::class, 'stepNotifications']);
         Route::match(['GET', 'POST'], '/employee/step-notifications', [ App\Http\Controllers\Authenticated\Hr::class, 'stepNotifications' ]);
 
         Route::post('/salary-grades/new', [App\Http\Controllers\Authenticated\Hr::class, 'createSalaryGrade' ])->name('salary-grades.new');

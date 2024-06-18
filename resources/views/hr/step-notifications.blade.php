@@ -22,7 +22,7 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item rounded-0 d-flex align-items-center" href="account-settings">
+                                <a class="dropdown-item rounded-0 d-flex align-items-center" href="/account-settings">
                                     <span class="material-icons-outlined pe-2">manage_accounts</span>
                                     <font class="pt-1">Account Settings</font>
                                 </a>
@@ -54,9 +54,7 @@
     <div class="container-fluid">
         <section class="px-3">
             <h2 class="h1 fw-bold">Step Increment Notifications</h2>
-            <h1 class="h6">
-
-            </h1>
+            <h1 class="h6"></h1>
 
             @include('includes.message')
 
@@ -69,11 +67,11 @@
                                 {{ $n->message }}
 
                                 <div class="w-100">
-                                    <button data-mdb-toggle="modal" data-mdb-target="#stepUpdate_{{ $n->id }}" class="btn btn-sm btn-warning mt-2">update now</button>
+                                    <button data-mdb-toggle="modal" data-mdb-target="#stepUpdate_{{ $n->id }}" class="btn btn-sm btn-warning mt-2">Update now</button>
                                 </div>
                                 <hr>
 
-                                @include('includes.step-update')
+                                @include('includes.step-update', ['notification' => $n])
                             </li>
                         @endforeach
                     </ul>
@@ -83,4 +81,3 @@
     </div>
 </div>
 @stop
-
