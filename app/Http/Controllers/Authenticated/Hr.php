@@ -1164,6 +1164,15 @@ class Hr extends Controller
 
         return response()->json(['success' => 'Leave credits updated successfully']);
     }
+    public function downloadLeaveRequestPdf($id)
+    {
+        $leaveRequest = LeaveRequest::findOrFail($id);
 
+        $pdf = PDF::loadView('download.leave-request', compact('leaveRequest'))
+            ->setPaper('legal', 'portrait')
+            ->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
+
+        return $pdf->download('leave-request-' . $id . '.pdf');
+    }
 
 }

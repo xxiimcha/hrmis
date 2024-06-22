@@ -53,6 +53,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/employee/all/info/{employeeNo}/downloadLeaveCard', [ App\Http\Controllers\Authenticated\DownloadFiles::class, 'downloadLeaveCard' ]);
         Route::get('/employee/all/info/{employeeNo}/removeLeaveCard/{lcid}', [ App\Http\Controllers\Authenticated\Hr::class, 'removeLeaveCard' ]);
         Route::post('/employee/all/info/{employeeNo}/editLeaveCard/{lcid}', [ App\Http\Controllers\Authenticated\Hr::class, 'editLeaveCard' ]);
+        Route::get('leave-request/pdf/{id}', [App\Http\Controllers\Authenticated\Hr::class, 'downloadLeaveRequestPdf'])->name('leave-request.pdf');
+
 
         Route::get('/leave/received', [ App\Http\Controllers\Authenticated\Hr::class, 'leaveRequestReceived' ]);
         Route::get('/leave/managed', [ App\Http\Controllers\Authenticated\Hr::class, 'leaveRequestManaged' ]);
