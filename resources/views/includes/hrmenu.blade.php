@@ -66,6 +66,11 @@
                         </a>
                     </ul>
                 @endif
+
+                <a href="/welcome/hr/employee/step-notifications" class="list-group-item list-group-item-action py-2 ripple d-flex align-items-center {{ Request::is('/welcome/hr/employee/step-notifications') ? 'bg-warning text-white' : '' }}">
+                    <span class="material-icons-outlined pe-2">dashboard</span>
+                    <font class="pt-1">Step Increment</font>
+                </a>
             </div>
       	</div>
     </nav>

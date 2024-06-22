@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Models\{
     User,
@@ -1025,41 +1026,45 @@ class Hr extends Controller
     }
 
     public function stepNotifications(Request $request)
-    {
-        $this->checkFor3Years();
+{
+    $this->checkFor3Years();
 
-        $notif = StepNotification::with('employeeInfo')->get();
+    // Use a join to get the related employee information
+    $notif = StepNotification::join('employee_tables', 'step_notifications.employee_table_id', '=', 'employee_tables.id')
+        ->select('step_notifications.*', 'employee_tables.*') // Select necessary fields
+        ->get();
 
-        if ($request->isMethod('post')) {
-            $stepId = $request->stepId;
-            $employee = EmployeeTable::findOrFail($request->employeeTableId);
+    if ($request->isMethod('post')) {
+        $stepId = $request->stepId;
+        $employee = EmployeeTable::findOrFail($request->employeeTableId);
 
-            StepNotification::where('employee_table_id', $request->employeeTableId)->delete();
+        StepNotification::where('employee_table_id', $request->employeeTableId)->delete();
 
-            $pdf = PDF::loadView('download.step-notice', [
-                'employee' => $employee,
-                'data' => $request->all()
-            ])->setPaper('legal', 'portrait')->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
+        $pdf = PDF::loadView('download.step-notice', [
+            'employee' => $employee,
+            'data' => $request->all()
+        ])->setPaper('legal', 'portrait')->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
 
-            StepNotification::where('id', $stepId)->update([
-                // Your update logic here
-            ]);
+        StepNotification::where('id', $stepId)->update([
+            // Your update logic here
+        ]);
 
-            $employee->update([
-                'position' => $request->position,
-                'current_salary' => $request->meritValue + $request->lengthOfServiceValue + $employee->current_salary * 30,
-                'current_salary_mode' => '/month',
-                'entered_date' => now()
-            ]);
+        $employee->update([
+            'position' => $request->position,
+            'current_salary' => $request->meritValue + $request->lengthOfServiceValue + $employee->current_salary * 30,
+            'current_salary_mode' => '/month',
+            'entered_date' => now()
+        ]);
 
-            return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
+        return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
 
-            // Redirection after download (won't execute due to return above)
-            // return redirect()->back()->with('message', '<strong>Success!</strong>');
-        }
-
-        return view('hr.step-notifications', ['notif' => $notif]);
+        // Redirection after download (won't execute due to return above)
+        // return redirect()->back()->with('message', '<strong>Success!</strong>');
     }
+
+    return view('hr.step-notifications', ['notif' => $notif]);
+}
+
 
     public function createSalaryGrade(Request $request)
     {
