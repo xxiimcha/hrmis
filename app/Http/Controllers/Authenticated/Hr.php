@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DateTime;
 
 use App\Models\{
     User,
@@ -1014,11 +1015,15 @@ class Hr extends Controller
         $employees = EmployeeTable::all();
 
         foreach ($employees as $employee) {
+            $yearsOfService = now()->diffInYears(Carbon::parse($employee->entered_date));
             $checkIfExist = StepNotification::where('employee_table_id', $employee->id)->orderBy('created_at', 'DESC')->first();
 
-            if (now()->diffInYears(Carbon::parse($employee->entered_date)) >= 3 && (!$checkIfExist || $checkIfExist->managed == 0)) {
+            if ($yearsOfService >= 3 && (!$checkIfExist || $checkIfExist->managed == 0)) {
+                $periods = floor($yearsOfService / 3);
+                $message = "has reached " . ($periods * 3) . " years in service. Update record if necessary.";
+
                 $stepNotif = new StepNotification;
-                $stepNotif->message = "already reach 3 years in service. Update record if necessary";
+                $stepNotif->message = $employee->firstname . " " . $employee->lastname . " " . $message;
                 $stepNotif->employee_table_id = $employee->id;
                 $stepNotif->save();
             }
@@ -1026,45 +1031,61 @@ class Hr extends Controller
     }
 
     public function stepNotifications(Request $request)
-{
-    $this->checkFor3Years();
+    {
+        $this->checkFor3Years();
 
-    // Use a join to get the related employee information
-    $notif = StepNotification::join('employee_tables', 'step_notifications.employee_table_id', '=', 'employee_tables.id')
-        ->select('step_notifications.*', 'employee_tables.*') // Select necessary fields
-        ->get();
+        // Use a join to get the related employee information
+        $notif = StepNotification::join('employee_tables', 'step_notifications.employee_table_id', '=', 'employee_tables.id')
+            ->select('step_notifications.*', 'employee_tables.*') // Select necessary fields
+            ->get();
 
-    if ($request->isMethod('post')) {
-        $stepId = $request->stepId;
-        $employee = EmployeeTable::findOrFail($request->employeeTableId);
+        if ($request->isMethod('post')) {
+            $stepId = $request->stepId;
+            $employee = EmployeeTable::findOrFail($request->employeeTableId);
 
-        StepNotification::where('employee_table_id', $request->employeeTableId)->delete();
+            // Calculate merit and length of service values
+            $enteredDate = new DateTime($employee->entered_date);
+            $currentDate = new DateTime();
+            $yearsOfService = $currentDate->diff($enteredDate)->y;
+            $periods = floor($yearsOfService / 3);
+            $merit = min($periods, 8); // Merit value should not exceed 8
+            $meritValue = $merit * 1000; // Example calculation
+            $lengthOfServiceValue = $yearsOfService * 100; // Example calculation
 
-        $pdf = PDF::loadView('download.step-notice', [
-            'employee' => $employee,
-            'data' => $request->all()
-        ])->setPaper('legal', 'portrait')->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
+            $data = [
+                'position' => $request->position,
+                'merit' => $merit,
+                'meritValue' => $meritValue,
+                'lengthOfService' => $yearsOfService,
+                'lengthOfServiceValue' => $lengthOfServiceValue,
+            ];
 
-        StepNotification::where('id', $stepId)->update([
-            // Your update logic here
-        ]);
+            StepNotification::where('employee_table_id', $request->employeeTableId)->delete();
 
-        $employee->update([
-            'position' => $request->position,
-            'current_salary' => $request->meritValue + $request->lengthOfServiceValue + $employee->current_salary * 30,
-            'current_salary_mode' => '/month',
-            'entered_date' => now()
-        ]);
+            $pdf = PDF::loadView('download.step-notice', [
+                'employee' => $employee,
+                'data' => $data
+            ])->setPaper('legal', 'portrait')->setOptions(['isHtml5ParserEnabled' => true, 'defaultFont' => 'sans-serif']);
 
-        return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
+            StepNotification::where('id', $stepId)->update([
+                // Your update logic here
+            ]);
 
-        // Redirection after download (won't execute due to return above)
-        // return redirect()->back()->with('message', '<strong>Success!</strong>');
+            $employee->update([
+                'position' => $request->position,
+                'current_salary' => $meritValue + $lengthOfServiceValue + $employee->current_salary * 30,
+                'current_salary_mode' => '/month',
+                'entered_date' => now()
+            ]);
+
+            return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
+
+            // Redirection after download (won't execute due to return above)
+            // return redirect()->back()->with('message', '<strong>Success!</strong>');
+        }
+
+        return view('hr.step-notifications', ['notif' => $notif]);
     }
-
-    return view('hr.step-notifications', ['notif' => $notif]);
-}
-
 
     public function createSalaryGrade(Request $request)
     {

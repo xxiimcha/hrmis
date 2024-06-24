@@ -11,8 +11,8 @@
 
                     <p class="small">Basic Monthly Salary: ₱{{ $n->employeeTinfo->current_salary * 22 }}</p>
 
-                    <input type="text" value="{{ $n->id }}" name="stepId" class="sr-only">
-                    <input type="text" value="{{ $n->employee_table_id }}" name="employeeTableId" class="sr-only">
+                    <input type="hidden" value="{{ $n->id }}" name="stepId">
+                    <input type="hidden" value="{{ $n->employee_table_id }}" name="employeeTableId">
 
                     <div class="form-outline mb-2">
                         <input type="text" name="position" required value="{{ $n->employeeTinfo->position }}" id="new-ref-name" class="form-control form-control-lg">
@@ -24,49 +24,53 @@
                     <div class="row">
                         <div class="col-xl-6">
                             <div class="form-outline mb-2">
-                                <input type="text" id="merit" class="form-control form-control-lg" name="merit">
                                 <label class="form-label" for="merit" style="margin-left: 0px;">Merit</label>
+                                <p id="merit_{{ $n->id }}" class="form-control-plaintext"></p>
+                                <input type="hidden" id="meritValue_{{ $n->id }}" name="meritValue">
                             </div>
                         </div>
 
                         <div class="col-xl-6">
                             <div class="form-outline mb-2">
-                                <input type="number" id="meritValue" class="form-control form-control-lg" name="meritValue">
-                                <label class="form-label" for="meritValue" style="margin-left: 0px;">Value</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <div class="form-outline mb-2">
-                                <input type="text" id="lengthOfService" class="form-control form-control-lg" required name="lengthOfService">
                                 <label class="form-label" for="lengthOfService" style="margin-left: 0px;">Length of Service</label>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-6">
-                            <div class="form-outline mb-2">
-                                <input type="number" id="lengthOfServiceValue" class="form-control form-control-lg" required name="lengthOfServiceValue">
-                                <label class="form-label" for="lengthOfServiceValue" style="margin-left: 0px;">Value</label>
+                                <p id="lengthOfService_{{ $n->id }}" class="form-control-plaintext"></p>
+                                <input type="hidden" id="lengthOfServiceValue_{{ $n->id }}" name="lengthOfServiceValue">
                             </div>
                         </div>
                     </div>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary bluish_button" data-mdb-dismiss="modal">cancel</button>
+                <button type="button" class="btn btn-secondary bluish_button" data-mdb-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-primary" id="saveReference">Save</button>
             </form>
             </div>
         </div>
     </div>
-</div><script>
+</div>
+
+<script>
     document.addEventListener("DOMContentLoaded", function () {
+        $('#stepUpdate_{{ $n->id }}').on('show.bs.modal', function () {
+            // Calculate the number of 3-year periods
+            var enteredDate = new Date('{{ $n->employeeTinfo->entered_date }}');
+            var currentDate = new Date();
+            var yearsOfService = Math.floor((currentDate - enteredDate) / (1000 * 60 * 60 * 24 * 365));
+            var periods = Math.floor(yearsOfService / 3);
+
+            // Ensure the merit value doesn't exceed 8
+            var merit = periods > 8 ? 8 : periods;
+
+            // Set the merit and length of service values
+            document.getElementById('merit_{{ $n->id }}').innerText = merit;
+            document.getElementById('meritValue_{{ $n->id }}').value = merit * 1000; // Example calculation
+            document.getElementById('lengthOfService_{{ $n->id }}').innerText = yearsOfService;
+            document.getElementById('lengthOfServiceValue_{{ $n->id }}').value = yearsOfService * 100; // Example calculation
+        });
+
         document.getElementById("saveReference").addEventListener("click", function () {
             // Close the modal when the "Save" button is clicked
             $("#stepUpdate_{{ $n->id }}").modal("hide");
         });
     });
 </script>
-
