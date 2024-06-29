@@ -17,21 +17,60 @@ class Em extends Controller
 
         $leaveRequests = LeaveRequest::where('employee_table_id', $i->id)->count();
 
+        // Retrieve leave balances from the database
         $leaveCredits = $i->leaveCredits;
         $vacationLeave = $i->vacationLeave;
         $sickLeave = $i->sickLeave;
+        $mandatoryLeave = $i->mandatoryLeave;
+        $maternityLeave = $i->maternityLeave;
+        $paternityLeave = $i->paternityLeave;
+        $specialPrivilegeLeave = $i->specialPrivilegeLeave;
+        $soloParentLeave = $i->soloParentLeave;
+        $studyLeave = $i->studyLeave;
+        $vawcLeave = $i->vawcLeave;
+        $rehabilitationLeave = $i->rehabilitationLeave;
+        $specialLeaveForWomen = $i->specialLeaveForWomen;
+        $specialEmergencyLeave = $i->specialEmergencyLeave;
+        $adoptionLeave = $i->adoptionLeave;
 
         return view('employee.dashboard', [
             'leaveCount' => $leaveRequests,
             'leaveCredits' => $leaveCredits,
             'vacationLeave' => $vacationLeave,
             'sickLeave' => $sickLeave,
+            'mandatoryLeave' => $mandatoryLeave,
+            'maternityLeave' => $maternityLeave,
+            'paternityLeave' => $paternityLeave,
+            'specialPrivilegeLeave' => $specialPrivilegeLeave,
+            'soloParentLeave' => $soloParentLeave,
+            'studyLeave' => $studyLeave,
+            'vawcLeave' => $vawcLeave,
+            'rehabilitationLeave' => $rehabilitationLeave,
+            'specialLeaveForWomen' => $specialLeaveForWomen,
+            'specialEmergencyLeave' => $specialEmergencyLeave,
+            'adoptionLeave' => $adoptionLeave,
         ]);
     }
 
     public function newLeaveRequest(Request $request) {
         $myInfo = EmployeeTable::where('user_id', Auth::user()->id)->first();
-        $currentSalary = EmployeeTable::join('employee_service_records', 'employee_tables.id', '=', 'employee_service_records.employee_table_id')->orderBy('employee_service_records.created_at', 'DESC')->first();
+        $currentSalary = EmployeeTable::join('employee_service_records', 'employee_tables.id', '=', 'employee_service_records.employee_table_id')
+                                      ->orderBy('employee_service_records.created_at', 'DESC')->first();
+
+        // Retrieve leave balances from the database
+        $vacationLeave = $myInfo->vacationLeave;
+        $mandatoryLeave = $myInfo->mandatoryLeave;
+        $sickLeave = $myInfo->sickLeave;
+        $maternityLeave = $myInfo->maternityLeave;
+        $paternityLeave = $myInfo->paternityLeave;
+        $specialPrivilegeLeave = $myInfo->specialPrivilegeLeave;
+        $soloParentLeave = $myInfo->soloParentLeave;
+        $studyLeave = $myInfo->studyLeave;
+        $vawcLeave = $myInfo->vawcLeave;
+        $rehabilitationLeave = $myInfo->rehabilitationLeave;
+        $specialLeaveForWomen = $myInfo->specialLeaveForWomen;
+        $specialEmergencyLeave = $myInfo->specialEmergencyLeave;
+        $adoptionLeave = $myInfo->adoptionLeave;
 
         if($request->method() == "POST") {
             $validation_patterns = [
@@ -81,7 +120,23 @@ class Em extends Controller
             }
         }
 
-        return view('employee.new-request', [ 'myInfo' => $myInfo, 'currentSalary' => $currentSalary ]);
+        return view('employee.new-request', [
+            'myInfo' => $myInfo,
+            'currentSalary' => $currentSalary,
+            'vacationLeave' => $vacationLeave,
+            'mandatoryLeave' => $mandatoryLeave,
+            'sickLeave' => $sickLeave,
+            'maternityLeave' => $maternityLeave,
+            'paternityLeave' => $paternityLeave,
+            'specialPrivilegeLeave' => $specialPrivilegeLeave,
+            'soloParentLeave' => $soloParentLeave,
+            'studyLeave' => $studyLeave,
+            'vawcLeave' => $vawcLeave,
+            'rehabilitationLeave' => $rehabilitationLeave,
+            'specialLeaveForWomen' => $specialLeaveForWomen,
+            'specialEmergencyLeave' => $specialEmergencyLeave,
+            'adoptionLeave' => $adoptionLeave
+        ]);
     }
 
     public function leaveRequests(Request $request) {
@@ -92,10 +147,11 @@ class Em extends Controller
     }
 
     public function removeRequest(Request $request, string $rId) {
-        LeaveRequestTrack::where('leave_request_id', $rId)->delete();
-        LeaveRequest::where('id', $rId)->delete();
+        $leaveRequest = LeaveRequest::findOrFail($rId);
+        $leaveRequest->status = 'Cancelled';
+        $leaveRequest->save();
 
-        return redirect()->back()->with('message', '<strong>Well done!</strong> Your request has been deleted');
+        return redirect()->back()->with('message', '<strong>Well done!</strong> Your request has been cancelled');
     }
 
     public function profile(Request $request) {
