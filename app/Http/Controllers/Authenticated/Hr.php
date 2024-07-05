@@ -1070,12 +1070,19 @@ class Hr extends Controller
             $meritValue = $merit * 1000; // Example calculation
             $lengthOfServiceValue = $yearsOfService * 100; // Example calculation
 
+            // Get the salary adjustment value from the request
+            $salaryAdjustment = $request->input('salaryAdjustment', 0);
+
+            // Convert current salary to a monthly value if it's not already
+            $currentMonthlySalary = $employee->current_salary;
+
             $data = [
                 'position' => $request->position,
                 'merit' => $merit,
                 'meritValue' => $meritValue,
                 'lengthOfService' => $yearsOfService,
                 'lengthOfServiceValue' => $lengthOfServiceValue,
+                'salaryAdjustment' => $salaryAdjustment
             ];
 
             StepNotification::where('employee_table_id', $request->employeeTableId)->delete();
@@ -1089,11 +1096,20 @@ class Hr extends Controller
                 // Your update logic here
             ]);
 
+            $newSalary = $meritValue + $lengthOfServiceValue + $currentMonthlySalary + $salaryAdjustment;
+
+            // Update the employee's current salary
             $employee->update([
                 'position' => $request->position,
-                'current_salary' => $meritValue + $lengthOfServiceValue + $employee->current_salary * 30,
+                'current_salary' => $newSalary,
                 'current_salary_mode' => '/month',
                 'entered_date' => now()
+            ]);
+
+            // Update the latest record in employee_service_records for the given employee_table_id
+            \DB::table('employee_service_records')->where('employee_table_id', $request->employeeTableId)->orderBy('created_at', 'desc')->limit(1)->update([
+                'salary' => $newSalary,
+                'updated_at' => now() // Update the updated_at timestamp
             ]);
 
             return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
@@ -1104,7 +1120,6 @@ class Hr extends Controller
 
         return view('hr.step-notifications', ['notif' => $notif]);
     }
-
     public function createSalaryGrade(Request $request)
     {
         if ($request->isMethod('post')) {

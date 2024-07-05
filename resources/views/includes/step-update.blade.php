@@ -62,7 +62,6 @@
             var currentDate = new Date();
             var yearsOfService = Math.floor((currentDate - enteredDate) / (1000 * 60 * 60 * 24 * 365));
             var periods = Math.floor(yearsOfService / 3);
-
             // Ensure the merit value doesn't exceed 8
             var merit = periods > 8 ? 8 : periods;
 

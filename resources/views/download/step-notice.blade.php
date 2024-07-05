@@ -50,7 +50,7 @@
 
             <span style="margin-left: 105px;">(__<u>{{ $data['merit'] }}</u>__Step/s)</span>
         </div>
-        <div style="width: 20%; float: right; text-align: right; font-family: 'DejaVu Sans Mono', monospace;"><u>{!! $data['merit'] ? '&#8369;' . $data['meritValue'] : '' !!}</u></div>
+        <div style="width: 20%; float: right; text-align: right; font-family: 'DejaVu Sans Mono', monospace;"><u>{!! $data['merit'] ? '&#8369;' . $data['salaryAdjustment'] : '' !!}</u></div>
     </div>
 
     <div style="font-weight: bold; padding-left: 40px; padding-right: 40px; height: 30px;">
