@@ -1112,7 +1112,7 @@ class Hr extends Controller
                 'updated_at' => now() // Update the updated_at timestamp
             ]);
 
-            return $pdf->download(date('m-d-Y') . '_' . time() . '_notice.pdf');
+            return $pdf->stream(date('m-d-Y') . '_' . time() . '_notice.pdf');
 
             // Redirection after download (won't execute due to return above)
             // return redirect()->back()->with('message', '<strong>Success!</strong>');
@@ -1120,6 +1120,7 @@ class Hr extends Controller
 
         return view('hr.step-notifications', ['notif' => $notif]);
     }
+
     public function createSalaryGrade(Request $request)
     {
         if ($request->isMethod('post')) {
