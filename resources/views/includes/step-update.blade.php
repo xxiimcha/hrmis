@@ -38,6 +38,11 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-outline mb-2">
+                        <input type="number" step="0.01" name="salaryAdjustment" required id="salary-adjustment-{{ $n->id }}" class="form-control form-control-lg">
+                        <label class="form-label" for="salary-adjustment-{{ $n->id }}" style="margin-left: 0px;">Salary Adjustment</label>
+                    </div>
             </div>
 
             <div class="modal-footer">

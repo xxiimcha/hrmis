@@ -57,7 +57,7 @@
         <div style="width: 70%; float: left; padding-left: 30px;">
             b. Length of Service
 
-            <span style="margin-left: 10px;">(__<u>{{ $data['lengthOfService'] }}</u>__Step/s)</span>
+            <span style="margin-left: 10px;">(__<u>{{ $data['lengthOfService'] }}</u>__Year/s)</span>
         </div>
         <div style="width: 20%; float: right; text-align: right; font-family: 'DejaVu Sans Mono', monospace;"><u>{!! $data['lengthOfService'] ? '&#8369;' . $data['lengthOfServiceValue'] : '' !!}</u></div>
     </div>
