@@ -528,10 +528,28 @@ class Hr extends Controller
 
         $salaryGrades = SalaryGrade::where('emp_id', $employeeNo)->get();
 
+        // Define the leave types from employee_table
+        $leaveTypes = [
+            'vacationLeave' => 'Vacation Leave',
+            'mandatoryLeave' => 'Mandatory Leave',
+            'sickLeave' => 'Sick Leave',
+            'maternityLeave' => 'Maternity Leave',
+            'paternityLeave' => 'Paternity Leave',
+            'specialPrivilegeLeave' => 'Special Privilege Leave',
+            'soloParentLeave' => 'Solo Parent Leave',
+            'studyLeave' => 'Study Leave',
+            'vawcLeave' => 'VAWC Leave',
+            'rehabilitationLeave' => 'Rehabilitation Leave',
+            'specialLeaveForWomen' => 'Special Leave for Women',
+            'specialEmergencyLeave' => 'Special Emergency Leave',
+            'adoptionLeave' => 'Adoption Leave'
+        ];
+
         return view('hr.employee-profile', [
             'employee' => $employee,
             'departments' => $department,
-            'salaryGrades' => $salaryGrades
+            'salaryGrades' => $salaryGrades,
+            'leaveTypes' => $leaveTypes
         ]);
     }
 

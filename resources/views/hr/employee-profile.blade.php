@@ -1174,56 +1174,71 @@
                                     </div>
                                 </button>
 
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <label for="leave-type-1">Select First Leave Type:</label>
+                                        <select id="leave-type-1" class="form-select">
+                                            @foreach ($leaveTypes as $leaveTypeKey => $leaveType)
+                                                <option value="{{ $leaveTypeKey }}">{{ $leaveType }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="leave-type-2">Select Second Leave Type:</label>
+                                        <select id="leave-type-2" class="form-select">
+                                            @foreach ($leaveTypes as $leaveTypeKey => $leaveType)
+                                                <option value="{{ $leaveTypeKey }}">{{ $leaveType }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="table-responsive mt-3">
                                     <table class="table table-sm table-bordered text-nowrap">
                                         <thead class="text-center">
                                             <tr>
                                                 <th class="fw-bold"></th>
                                                 <th class="fw-bold"></th>
-                                                <th colspan="5" class="fw-bold">Vacation Leave</th>
-                                                <th colspan="5" class="fw-bold">Sick Leave</th>
+                                                <th colspan="5" class="fw-bold" id="leave-type-header-1">{{ $leaveTypes['vacationLeave'] }}</th>
+                                                <th colspan="5" class="fw-bold" id="leave-type-header-2">{{ $leaveTypes['sickLeave'] }}</th>
                                                 <th class="fw-bold"></th>
                                                 <th class="fw-bold" rowspan="2">Action</th>
                                             </tr>
-
                                             <tr>
                                                 <th class="fw-bold">Period</th>
                                                 <th class="fw-bold">Particulars</th>
-
                                                 <th class="fw-bold">Earned</th>
                                                 <th class="fw-bold">Abs. Und</th>
                                                 <th class="fw-bold">Bal.</th>
                                                 <th class="fw-bold">W/P</th>
                                                 <th class="fw-bold">Total</th>
-
                                                 <th class="fw-bold">Earned</th>
                                                 <th class="fw-bold">Abs. Und</th>
                                                 <th class="fw-bold">Bal.</th>
                                                 <th class="fw-bold">W/P</th>
                                                 <th class="fw-bold">Total</th>
-
                                                 <th class="fw-bold">Date & Action taken on application for leave</th>
                                             </tr>
                                         </thead>
-
                                         <tbody class="table-group-divider table-divider-color">
                                             @foreach ($employee->employeeLeaveCard as $lc)
                                                 <tr class="text-center">
                                                     <td>{{ $lc->periodFrom . '-' . $lc->periodTo }}</td>
                                                     <td>{{ $lc->particulars }}</td>
-
-                                                    <td>{{ $lc->vacEarned }}</td>
-                                                    <td>{{ $lc->vacAbsUnd }}</td>
-                                                    <td>{{ $lc->vacBal }}</td>
-                                                    <td>{{ $lc->vacWP }}</td>
-                                                    <td>{{ $lc->vacTotal }}</td>
-
-                                                    <td>{{ $lc->sickEarned }}</td>
-                                                    <td>{{ $lc->sickAbsUnd }}</td>
-                                                    <td>{{ $lc->sickBal }}</td>
-                                                    <td>{{ $lc->sickWP }}</td>
-                                                    <td>{{ $lc->sickTotal }}</td>
-
+                                                    @php
+                                                        $leaveData1 = $lc->leaves ? $lc->leaves->where('type', 'vacationLeave')->first() : null;
+                                                        $leaveData2 = $lc->leaves ? $lc->leaves->where('type', 'sickLeave')->first() : null;
+                                                    @endphp
+                                                    <td>{{ $leaveData1->earned ?? 0 }}</td>
+                                                    <td>{{ $leaveData1->absUnd ?? 0 }}</td>
+                                                    <td>{{ $leaveData1->bal ?? 0 }}</td>
+                                                    <td>{{ $leaveData1->wp ?? 0 }}</td>
+                                                    <td>{{ $leaveData1->total ?? 0 }}</td>
+                                                    <td>{{ $leaveData2->earned ?? 0 }}</td>
+                                                    <td>{{ $leaveData2->absUnd ?? 0 }}</td>
+                                                    <td>{{ $leaveData2->bal ?? 0 }}</td>
+                                                    <td>{{ $leaveData2->wp ?? 0 }}</td>
+                                                    <td>{{ $leaveData2->total ?? 0 }}</td>
                                                     <td>{{ $lc->dateAction }}</td>
                                                     <td>
                                                         <span class="material-icons-outlined text-warning" style="cursor: pointer" data-mdb-toggle="modal" data-mdb-target="#lc_{{ $lc->id }}">edit</span>
@@ -1240,6 +1255,24 @@
                                     </table>
                                 </div>
                             </div>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const leaveTypes = @json($leaveTypes);
+                                    const leaveType1Select = document.getElementById('leave-type-1');
+                                    const leaveType2Select = document.getElementById('leave-type-2');
+                                    const leaveTypeHeader1 = document.getElementById('leave-type-header-1');
+                                    const leaveTypeHeader2 = document.getElementById('leave-type-header-2');
+
+                                    function updateLeaveTypeHeaders() {
+                                        leaveTypeHeader1.textContent = leaveTypes[leaveType1Select.value];
+                                        leaveTypeHeader2.textContent = leaveTypes[leaveType2Select.value];
+                                    }
+
+                                    leaveType1Select.addEventListener('change', updateLeaveTypeHeaders);
+                                    leaveType2Select.addEventListener('change', updateLeaveTypeHeaders);
+                                });
+                            </script>
 
                             <div class="tab-pane fade py-2" id="service-record" role="tabpanel" aria-labelledby="service-record">
                                 <button class="btn btn-light btn-sm shadow-sm" id="dsr">

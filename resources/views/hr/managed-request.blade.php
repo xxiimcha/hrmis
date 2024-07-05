@@ -74,8 +74,13 @@
                                                         </td>
                                                         <td data-mdb-field="field_1" false=""><div style="padding-top: 5px;">{{ $lr->firstname . ' ' .  $lr->middlename . ' ' .  $lr->lastname }}</div></td>
                                                         <td data-mdb-field="field_1" false="">
-                                                            <div style="padding-top: 5px;">
-                                                                {{ $a->trackStatus  }}
+                                                            <div style="padding-top: 5px;" class="
+                                                                @if($a->trackStatus == 'Pending') text-warning
+                                                                @elseif($a->trackStatus == 'Approved') text-success
+                                                                @elseif($a->trackStatus == 'Rejected') text-danger
+                                                                @elseif($a->trackStatus == 'Cancelled') text-secondary
+                                                                @endif">
+                                                                {{ $a->trackStatus }}
                                                             </div>
                                                         </td>
                                                         <td data-mdb-field="field_1" false="">
@@ -102,4 +107,3 @@
         </div>
     </main>
 @stop
-
